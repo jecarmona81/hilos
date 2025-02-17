@@ -1,0 +1,73 @@
+package com.mycompany.multithreadapp;
+
+import java.util.Scanner;
+
+public class MultiThreadApp {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Solicitar entrada del usuario
+        System.out.print("Introduce un número para el conteo regresivo: ");
+        int countdownStart = scanner.nextInt();
+        scanner.nextLine(); // Consumir nueva línea
+        
+        System.out.print("Introduce una letra (A-Z) para el segundo hilo: ");
+        char endLetter = scanner.nextLine().charAt(0);
+
+        // Validar entrada del usuario
+        if (countdownStart <= 0 || !Character.isLetter(endLetter) || endLetter < 'A' || endLetter > 'Z') {
+            System.out.println("Entradas no válidas. Por favor, introduce valores correctos.");
+            return;
+        }
+
+        // Crear y ejecutar los hilos
+        Thread countdownThread = new Thread(new CountdownTask(countdownStart));
+        Thread alphabetThread = new Thread(new AlphabetTask(endLetter));
+
+        countdownThread.start();
+        alphabetThread.start();
+    }
+}
+
+class CountdownTask implements Runnable {
+    private int startNumber;
+
+    public CountdownTask(int startNumber) {
+        this.startNumber = startNumber;
+    }
+
+    @Override
+    public void run() {
+        try {
+            for (int i = startNumber; i >= 0; i--) {
+                System.out.println("Conteo regresivo: " + i);
+                Thread.sleep(500); // Esperar 500 ms entre cada ejecución
+            }
+        } catch (InterruptedException e) {
+            System.err.println("Hilo de conteo regresivo interrumpido.");
+        }
+        System.out.println("Trabajo del hilo CountdownTask terminado");
+    }
+}
+
+class AlphabetTask implements Runnable {
+    private char endLetter;
+
+    public AlphabetTask(char endLetter) {
+        this.endLetter = endLetter;
+    }
+
+    @Override
+    public void run() {
+        try {
+            for (char c = 'A'; c <= endLetter; c++) {
+                System.out.println("Letra: " + c);
+                Thread.sleep(600); // Esperar 600 ms entre cada ejecución
+            }
+        } catch (InterruptedException e) {
+            System.err.println("Hilo de alfabeto interrumpido.");
+        }
+        System.out.println("Trabajo del hilo AlphabetTask terminado");
+    }
+}
